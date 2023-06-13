@@ -1,8 +1,8 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
 
-
-
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+// const THREE = require('three')
+// const OrbitControls = require('three-orbitcontrols')
 let mesh, renderer, scene, camera;
 
 let gui;
@@ -77,7 +77,7 @@ function init() {
     camera.position.set( 0, 0, 30 );
 
     // controls
-    const controls = new THREE.controls.orbiOrbitControls( camera, renderer.domElement );
+    const controls = new  OrbitControls( camera, renderer.domElement );
     controls.addEventListener( 'change', render );
     controls.minDistance = 10;
     controls.maxDistance = 50;
@@ -171,8 +171,8 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame( animate );
     if(uploaded){
-        mesh.rotation.x += 0.005;
-        mesh.rotation.y += 0.01;
+        // mesh.rotation.x += 0.005;
+        // mesh.rotation.y += 0.01;
         renderer.render( scene, camera );
     
     }
