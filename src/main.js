@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
 
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/loaders/FBXLoader.js'
 // const THREE = require('three')
 // const OrbitControls = require('three-orbitcontrols')
 let mesh, renderer, scene, camera;
@@ -10,6 +11,7 @@ let gui;
 let lightProbe;
 let directionalLight;
 let uploaded = false;
+let material;
 // linear color space
 const API = {
     lightProbeIntensity: 1.0,
@@ -89,7 +91,7 @@ function init() {
     scene.add( lightProbe );
 
     // light
-    directionalLight = new THREE.DirectionalLight( 0xffffff, API.directionalLightIntensity);
+    directionalLight = new THREE.DirectionalLight( 0xffffff, API.directionalLightIntensity * 2);
     directionalLight.position.set( 10, 10, 10 );
     scene.add( directionalLight );
     const hemiLight = new THREE.HemisphereLight( 0x616161, 0x7d7d7d );
@@ -125,7 +127,7 @@ function init() {
 
     }); 
 
-    const material = new THREE.MeshStandardMaterial( {
+    material = new THREE.MeshStandardMaterial( {
         color: 0xffffff,
         metalness: 0,
         roughness: 0.5,
@@ -136,6 +138,28 @@ function init() {
         bumpScale: 0.05
 
     } );
+
+    // geometry
+    let roundCube;
+    const fbxLoader = new FBXLoader();
+    fbxLoader.load('/meshes/RoundCube.fbx',(object) => {
+            object.traverse(function (child) {
+                if ( child.isMesh ) {
+
+                    child.material = material;
+        
+            }
+            })
+            object.scale.set(0.02,0.02,0.02)
+            scene.add(object);
+            
+        },
+        (xhr) => {
+            console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+        },
+        (error) => {
+            console.log(error);
+        });
     const geometry = new THREE.SphereGeometry( 5, 64, 32 );
 
 
@@ -143,8 +167,8 @@ function init() {
     // const material = new THREE.MeshBasicMaterial( { map:texture } );
 
     // mesh
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
+    // mesh = new THREE.Mesh( geometry, material );
+    // scene.add( mesh );
 
     render();
     uploaded = true;
@@ -185,4 +209,25 @@ function render() {
 
     renderer.render( scene, camera );
 
+}
+
+addEventListener('message', e => {
+    console.log("received!" + e.data)
+    changeTexture(e.data)
+})
+
+function changeTexture(path){
+    console.log(path);
+    if(path=="")
+        return;
+    const diffuse_texture = new THREE.TextureLoader().load(path , function ( map ) {
+
+        map.wrapS = THREE.RepeatWrapping;
+        map.wrapT = THREE.RepeatWrapping;
+        map.anisotropy = 4;
+        map.repeat.set( 1, 1 );
+        map.colorSpace = THREE.SRGBColorSpace;
+
+    }); 
+    material.map = diffuse_texture;
 }
