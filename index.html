@@ -23,7 +23,13 @@
 		</script>
 	</head>
 	<body>
-        <label for="myfile">Diffuse:</label><input id="userImage" type="file"/>
+        <div id="ipt" style="background-color:#FFD382;padding:10px;margin-bottom:5px;">
+            <input id="userImage" type="file" hidden />
+            请拖拽此处上传文件
+        </div>
+        
+        <!-- <label for="myfile">Diffuse:</label>
+        <input id="userImage" type="file"/> -->
         <div id="threejs-container">
             <!-- Our output to be rendered here → -->
          </div>

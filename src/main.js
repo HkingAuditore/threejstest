@@ -12,6 +12,8 @@ let lightProbe;
 let directionalLight;
 let uploaded = false;
 let material;
+
+
 // linear color space
 const API = {
     lightProbeIntensity: 1.0,
@@ -20,16 +22,40 @@ const API = {
 };
 
 
+//
+var div = document.getElementById('ipt');
+ 
+div.addEventListener("dragenter",function(e){  //拖进
+    e.preventDefault();      
+})  
+div.addEventListener("dragover",function(e){  //拖来拖去 
+    e.preventDefault();      
+})
+div.addEventListener('drop', function(e) {
+	e.preventDefault(); 
+	// 将类数组对象 转换成数组
+	// var fileList = Array.from(event.dataTransfer.files);  //  es6 格式
+	var fileList = [].slice.call(e.dataTransfer.files);  // es5 格式
+    console.log(fileList)
+    var userImage = fileList[0];     
+    var userImageURL = URL.createObjectURL( userImage );
+	changeTexture(userImageURL)
+})
+
+//
+
+
+
+
 init();
 animate();
 
     
 
 function init() {
-    document.getElementById('userImage').addEventListener('change', function(e) {
 
-    var userImage = e.target.files[0];     
-    var userImageURL = URL.createObjectURL( userImage );
+    // var userImage = e.target.files[0];     
+    // var userImageURL = URL.createObjectURL( userImage );
 
     // renderer
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -99,7 +125,7 @@ function init() {
 	scene.add( hemiLight );
 
     // texture
-    const diffuse_texture = new THREE.TextureLoader().load(userImageURL , function ( map ) {
+    const diffuse_texture = new THREE.TextureLoader().load('/textures/sandstone_diffuse.jpg' , function ( map ) {
 
         map.wrapS = THREE.RepeatWrapping;
         map.wrapT = THREE.RepeatWrapping;
@@ -176,9 +202,7 @@ function init() {
 
 
     // listener
-    window.addEventListener( 'resize', onWindowResize );
-
-}); 
+    window.addEventListener( 'resize', onWindowResize ); 
 }
 
 function onWindowResize() {
